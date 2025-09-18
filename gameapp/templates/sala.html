@@ -77,11 +77,33 @@
                 clearInterval(timerInterval);
                 timerSpan.textContent = "00:00";
                 timerSpan.classList.add('bg-red-200', 'text-red-700', 'animate-bounce');
+               disableChatAndShowVote(); 
                 showTimeUpMessage();
+               
             }
+    
         }, 1000);
     }
 
+    function disableChatAndShowVote() {
+        // Deshabilitar el input, el botón y el form de chat
+        document.getElementById('chatInput').disabled = true;
+        document.getElementById('chatForm').style.display = 'none';
+        document.getElementById('chatLocked').style.display = '';
+        document.getElementById('chatLocked').textContent = 'El chat está deshabilitado. ¡Hora de votar!';
+        var voteBtn = document.createElement('button');
+        voteBtn.id = 'voteBtn';
+        voteBtn.className = 'mt-6 bg-gradient-to-r from-yellow-400 via-red-400 to-purple-400 text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:scale-105 transition-all duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-yellow-300';
+        voteBtn.textContent = 'Votar';
+        voteBtn.onclick = function() {
+            socket.emit('vote', {nickname: nickname});
+            voteBtn.disabled = true;
+            voteBtn.classList.add('opacity-50','cursor-not-allowed');
+            voteBtn.textContent = 'Voto enviado';
+        };
+        document.getElementById('chatLocked').appendChild(voteBtn);
+    }
+    
     function showTimeUpMessage() {
         var container = document.getElementById('timerContainer');
         var msg = document.createElement('div');
