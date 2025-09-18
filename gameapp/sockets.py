@@ -74,6 +74,7 @@ def handle_start_game():
         player_words[nickname] = word
         emit("assign_word", {"nickname": nickname, "word": word}, room=sid)
     emit("game_started", {}, room="principal")
+    emit("start_timer", {"duration": 90}, room="principal")
 @socketio.on("chat_message")
 def handle_chat_message(data):
     if not game_started:
