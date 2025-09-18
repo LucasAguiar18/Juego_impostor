@@ -19,7 +19,7 @@
     <!-- Zona de discusión/chat -->
     <div class="w-1/2 bg-white rounded-2xl shadow-2xl p-8 border-4 border-purple-300 flex flex-col animate-fade-in">
         <h3 class="text-2xl font-bold mb-6 text-purple-700 tracking-wide">Zona de discusión</h3>
-        <div id="chat" class="flex-1 overflow-y-auto mb-6 border-2 border-purple-200 rounded-xl p-4 bg-purple-50" style="min-height:220px;"></div>
+    <div id="chat" class="flex-1 overflow-y-auto mb-6 border-2 border-purple-200 rounded-xl p-4 bg-purple-50" style="min-height:220px; max-height:400px;"></div>
         <form id="chatForm" class="flex gap-2" style="display:none;">
             <input type="text" id="chatInput" class="border-2 border-purple-300 rounded-xl p-3 flex-1 focus:outline-none focus:ring-2 focus:ring-purple-400 text-lg" placeholder="Escribe tu mensaje..." autocomplete="off" required>
             <button type="submit" class="bg-purple-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-purple-600 transition-all duration-200">Enviar</button>
@@ -126,7 +126,10 @@
         div.className = 'mb-2';
         div.innerHTML = '<span class="font-bold text-purple-700">' + data.nickname + ':</span> <span>' + data.message + '</span>';
         chat.appendChild(div);
-        chat.scrollTop = chat.scrollHeight;
+        // Autoscroll solo si el usuario está cerca del final
+        if (chat.scrollHeight - chat.scrollTop <= chat.clientHeight + 50) {
+            chat.scrollTop = chat.scrollHeight;
+        }
     });
 
     // Comenzar juego
