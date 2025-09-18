@@ -1,8 +1,15 @@
 
 {% extends "base.html" %}
 {% block content %}
-<h2 class="text-4xl font-extrabold mb-8 text-center text-purple-700 drop-shadow-lg tracking-wide">Bienvenido, {{ nickname }}</h2>
-<div class="flex flex-1 w-full max-w-6xl mx-auto gap-10">
+<div class="w-full flex flex-col gap-2 max-w-6xl mx-auto mt-8 mb-8">
+    <div class="flex items-center justify-between w-full">
+        <h2 class="text-4xl font-extrabold text-center flex-1 text-purple-700 drop-shadow-lg tracking-wide">Bienvenido, {{ nickname }}</h2>
+        <div id="timerContainer" class="flex items-center justify-end w-48">
+            <span id="timer" class="text-3xl font-bold text-blue-600 bg-blue-100 px-5 py-2 rounded-xl shadow-lg border-2 border-blue-300">01:30</span>
+        </div>
+    </div>
+    <div class="flex flex-1 w-full gap-10">
+        <!-- Zona de jugadores -->
     <!-- Zona de jugadores -->
     <div class="w-1/2 bg-white rounded-2xl shadow-2xl p-8 border-4 border-blue-300 flex flex-col items-center animate-fade-in">
         <h3 class="text-2xl font-bold mb-6 text-blue-700 tracking-wide">Jugadores conectados</h3>
@@ -51,6 +58,44 @@
             }
             container.appendChild(card);
         });
+    });
+
+    // Cronómetro
+    var timerInterval = null;
+    function startTimer(duration) {
+        var timer = duration, minutes, seconds;
+        var timerSpan = document.getElementById('timer');
+        if(timerInterval) clearInterval(timerInterval);
+        timerSpan.classList.remove('bg-red-200', 'text-red-700', 'animate-bounce');
+        timerInterval = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+            timerSpan.textContent = minutes + ":" + seconds;
+            if (--timer < 0) {
+                clearInterval(timerInterval);
+                timerSpan.textContent = "00:00";
+                timerSpan.classList.add('bg-red-200', 'text-red-700', 'animate-bounce');
+                showTimeUpMessage();
+            }
+        }, 1000);
+    }
+
+    function showTimeUpMessage() {
+        var container = document.getElementById('timerContainer');
+        var msg = document.createElement('div');
+        msg.className = 'ml-4 text-xl font-bold text-red-600 animate-pulse';
+        msg.textContent = '¡Tiempo terminado!';
+        container.appendChild(msg);
+        setTimeout(function() {
+            msg.remove();
+        }, 4000);
+    }
+
+    document.getElementById('startBtn').addEventListener('click', function() {
+        socket.emit('start_game');
+        startTimer(90); // 1:30 minutos
     });
 
     // Palabra asignada
