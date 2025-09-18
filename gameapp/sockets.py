@@ -37,7 +37,8 @@ def handle_join(data):
     emit("update_players", list(connected_players.values()), room=room)
 
     # Si el juego ya empezó, asignar palabra al que entra tarde (no recomendado, pero por robustez)
-    if game_started:
+    # No asignar palabra hasta que el juego comience
+    if room and hasattr(room, 'get') and room.get('game_started'):
         if request.sid == impostor_sid:
             word = "windows"
         else:
@@ -64,6 +65,7 @@ def handle_start_game():
     game_started = True
     # Asignar palabras
     player_words = {}
+    # Asignar palabras e impostor solo al comenzar
     for sid, nickname in connected_players.items():
         if sid == impostor_sid:
             word = "windows"
